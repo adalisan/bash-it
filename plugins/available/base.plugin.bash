@@ -237,3 +237,11 @@ function colors() {
         ((color++));
     done
 }
+
+function del() {
+    about 'move files to hidden folder in tmp, that gets cleared on each reboot'
+    param 'file or folder to be deleted'
+    example 'del ./file.txt'
+    group 'base'
+    mkdir -p /tmp/.trash && mv "$@" /tmp/.trash;
+}
