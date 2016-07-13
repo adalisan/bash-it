@@ -1,131 +1,243 @@
 #!/usr/bin/env bash
 
-__powerline() {
+USER_INFO_SSH_CHAR=${POWERLINE_USER_INFO_SSH_CHAR:=" "}
+USER_INFO_THEME_PROMPT_COLOR=32
+USER_INFO_THEME_PROMPT_COLOR_SUDO=202
 
-    # Unicode symbols
-    readonly PS_SYMBOL_DARWIN=''
-    readonly PS_SYMBOL_LINUX='$'
-    readonly PS_SYMBOL_OTHER='%'
-    readonly GIT_BRANCH_SYMBOL='⑂ '
-    readonly GIT_BRANCH_CHANGED_SYMBOL='+'
-    readonly GIT_NEED_PUSH_SYMBOL='⇡'
-    readonly GIT_NEED_PULL_SYMBOL='⇣'
+PYTHON_VENV_CHAR=${POWERLINE_PYTHON_VENV_CHAR:="❲p❳ "}
+CONDA_PYTHON_VENV_CHAR=${POWERLINE_CONDA_PYTHON_VENV_CHAR:="❲c❳ "}
+PYTHON_VENV_THEME_PROMPT_COLOR=35
 
-    # Solarized colorscheme
-    readonly FG_BASE03="\[$(tput setaf 8)\]"
-    readonly FG_BASE02="\[$(tput setaf 0)\]"
-    readonly FG_BASE01="\[$(tput setaf 10)\]"
-    readonly FG_BASE00="\[$(tput setaf 11)\]"
-    readonly FG_BASE0="\[$(tput setaf 12)\]"
-    readonly FG_BASE1="\[$(tput setaf 14)\]"
-    readonly FG_BASE2="\[$(tput setaf 7)\]"
-    readonly FG_BASE3="\[$(tput setaf 15)\]"
+SCM_NONE_CHAR=""
+SCM_GIT_CHAR=${POWERLINE_SCM_GIT_CHAR:=" "}
+PROMPT_CHAR=${POWERLINE_PROMPT_CHAR:="❯"}
 
-    readonly BG_BASE03="\[$(tput setab 8)\]"
-    readonly BG_BASE02="\[$(tput setab 0)\]"
-    readonly BG_BASE01="\[$(tput setab 10)\]"
-    readonly BG_BASE00="\[$(tput setab 11)\]"
-    readonly BG_BASE0="\[$(tput setab 12)\]"
-    readonly BG_BASE1="\[$(tput setab 14)\]"
-    readonly BG_BASE2="\[$(tput setab 7)\]"
-    readonly BG_BASE3="\[$(tput setab 15)\]"
+SCM_THEME_PROMPT_CLEAN=""
+SCM_THEME_PROMPT_DIRTY=""
 
-    readonly FG_YELLOW="\[$(tput setaf 3)\]"
-    readonly FG_ORANGE="\[$(tput setaf 9)\]"
-    readonly FG_RED="\[$(tput setaf 1)\]"
-    readonly FG_MAGENTA="\[$(tput setaf 5)\]"
-    readonly FG_VIOLET="\[$(tput setaf 13)\]"
-    readonly FG_BLUE="\[$(tput setaf 4)\]"
-    readonly FG_CYAN="\[$(tput setaf 6)\]"
-    readonly FG_GREEN="\[$(tput setaf 2)\]"
+SCM_THEME_PROMPT_CLEAN_COLOR=25
+SCM_THEME_PROMPT_DIRTY_COLOR=88
+SCM_THEME_PROMPT_STAGED_COLOR=30
+SCM_THEME_PROMPT_UNSTAGED_COLOR=92
+SCM_THEME_PROMPT_COLOR=${SCM_THEME_PROMPT_CLEAN_COLOR}
 
-    readonly BG_YELLOW="\[$(tput setab 3)\]"
-    readonly BG_ORANGE="\[$(tput setab 9)\]"
-    readonly BG_RED="\[$(tput setab 1)\]"
-    readonly BG_MAGENTA="\[$(tput setab 5)\]"
-    readonly BG_VIOLET="\[$(tput setab 13)\]"
-    readonly BG_BLUE="\[$(tput setab 4)\]"
-    readonly BG_CYAN="\[$(tput setab 6)\]"
-    readonly BG_GREEN="\[$(tput setab 2)\]"
+RVM_THEME_PROMPT_PREFIX=""
+RVM_THEME_PROMPT_SUFFIX=""
+RBENV_THEME_PROMPT_PREFIX=""
+RBENV_THEME_PROMPT_SUFFIX=""
 
-    readonly DIM="\[$(tput dim)\]"
-    readonly REVERSE="\[$(tput rev)\]"
-    readonly RESET="\[$(tput sgr0)\]"
-    readonly BOLD="\[$(tput bold)\]"
+RUBY_THEME_PROMPT_COLOR=161
+RUBY_CHAR=${POWERLINE_RUBY_CHAR:="❲r❳"}
 
-    # what OS?
-    case "$(uname)" in
-        Darwin)
-            readonly PS_SYMBOL=$PS_SYMBOL_DARWIN
-            ;;
-        Linux)
-            readonly PS_SYMBOL=$PS_SYMBOL_LINUX
-            ;;
-        *)
-            readonly PS_SYMBOL=$PS_SYMBOL_OTHER
-    esac
+CWD_THEME_PROMPT_COLOR=240
 
-    __git_info() {
-        [ -x "$(which git)" ] || return    # git not found
+LAST_STATUS_THEME_PROMPT_COLOR=196
 
-        local git_eng="env LANG=C git"   # force git output in English to make our work easier
-        # get current branch name or short SHA1 hash for detached head
-        local branch="$($git_eng symbolic-ref --short HEAD 2>/dev/null || $git_eng describe --tags --always 2>/dev/null)"
-        [ -n "$branch" ] || return  # git branch not found
+CLOCK_THEME_PROMPT_COLOR=240
 
-        local marks
+BATTERY_AC_CHAR=${BATTERY_AC_CHAR:="⚡"}
+BATTERY_STATUS_THEME_PROMPT_GOOD_COLOR=70
+BATTERY_STATUS_THEME_PROMPT_LOW_COLOR=208
+BATTERY_STATUS_THEME_PROMPT_CRITICAL_COLOR=160
 
-        # branch is modified?
-        [ -n "$($git_eng status --porcelain)" ] && marks+=" $GIT_BRANCH_CHANGED_SYMBOL"
+THEME_PROMPT_CLOCK_FORMAT=${POWERLINE_PROMPT_CLOCK_FORMAT:="%H:%M:%S"}
 
-        # how many commits local branch is ahead/behind of remote?
-        local stat="$($git_eng status --porcelain --branch | grep '^##' | grep -o '\[.\+\]$')"
-        local aheadN="$(echo $stat | grep -o 'ahead [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-        local behindN="$(echo $stat | grep -o 'behind [[:digit:]]\+' | grep -o '[[:digit:]]\+')"
-        [ -n "$aheadN" ] && marks+=" $GIT_NEED_PUSH_SYMBOL$aheadN"
-        [ -n "$behindN" ] && marks+=" $GIT_NEED_PULL_SYMBOL$behindN"
+IN_VIM_THEME_PROMPT_COLOR=245
+IN_VIM_THEME_PROMPT_TEXT="vim"
 
-        # print the git branch segment without a trailing newline
-        printf " $GIT_BRANCH_SYMBOL$branch$marks "
-    }
+POWERLINE_LEFT_PROMPT=${POWERLINE_LEFT_PROMPT:="scm python_venv ruby cwd"}
+POWERLINE_RIGHT_PROMPT=${POWERLINE_RIGHT_PROMPT:="in_vim clock battery user_info"}
 
-    ps1() {
-        # Check the exit code of the previous command and display different
-        # colors in the prompt accordingly.
-        if [ $? -eq 0 ]; then
-            local BG_EXIT="$BG_GREEN"
-        else
-            local BG_EXIT="$BG_RED"
-        fi
-
-        PS1="$BG_BASE1$FG_BASE3 \w $RESET"
-        PS1+="$BG_BLUE$FG_BASE3$(__git_info)$RESET"
-        PS1+="$BG_EXIT$FG_BASE3 $PS_SYMBOL $RESET "
-    }
-
-    PROMPT_COMMAND=ps1
+function set_rgb_color {
+  if [[ "${1}" != "-" ]]; then
+    fg="38;5;${1}"
+  fi
+  if [[ "${2}" != "-" ]]; then
+    bg="48;5;${2}"
+    [[ -n "${fg}" ]] && bg=";${bg}"
+  fi
+  echo -e "\[\033[${fg}${bg}m\]"
 }
 
-function powerline_in_vim_prompt {
-  if [ -z "$VIMRUNTIME" ]; then
-    IN_VIM_PROMPT=""
-  else
-    IN_VIM_PROMPT="$(set_rgb_color ${LAST_THEME_COLOR} ${IN_VIM_PROMPT_COLOR})${THEME_PROMPT_SEPARATOR}${normal}$(set_rgb_color - ${IN_VIM_PROMPT_COLOR}) ${IN_VIM_PROMPT_TEXT} ${normal}$(set_rgb_color ${IN_VIM_PROMPT_COLOR} -)${normal}"
-    LAST_THEME_COLOR=${IN_VIM_PROMPT_COLOR}
+function __powerline_user_info_prompt {
+  local user_info=""
+  local color=${USER_INFO_THEME_PROMPT_COLOR}
+
+  if sudo -n uptime 2>&1 | grep -q "load"; then
+    color=${USER_INFO_THEME_PROMPT_COLOR_SUDO}
+  fi
+  case "${POWERLINE_PROMPT_USER_INFO_MODE}" in
+    "sudo")
+      if [[ "${color}" == "${USER_INFO_THEME_PROMPT_COLOR_SUDO}" ]]; then
+        user_info="!"
+      fi
+      ;;
+    *)
+      if [[ -n "${SSH_CLIENT}" ]]; then
+        user_info="${USER_INFO_SSH_CHAR}${USER}@${HOSTNAME}"
+      else
+        user_info="${USER}"
+      fi
+      ;;
+  esac
+  [[ -n "${user_info}" ]] && echo "${user_info}|${color}"
+}
+
+function __powerline_ruby_prompt {
+  local ruby_version=""
+
+  if command_exists rvm; then
+    ruby_version="$(rvm_version_prompt)"
+  elif command_exists rbenv; then
+    ruby_version=$(rbenv_version_prompt)
+  fi
+
+  [[ -n "${ruby_version}" ]] && echo "${RUBY_CHAR}${ruby_version}|${RUBY_THEME_PROMPT_COLOR}"
+}
+
+function __powerline_python_venv_prompt {
+  local python_venv=""
+
+  if [[ -n "${CONDA_DEFAULT_ENV}" ]]; then
+    python_venv="${CONDA_DEFAULT_ENV}"
+    PYTHON_VENV_CHAR=${CONDA_PYTHON_VENV_CHAR}
+  elif [[ -n "${VIRTUAL_ENV}" ]]; then
+    python_venv=$(basename "${VIRTUAL_ENV}")
+  fi
+
+  [[ -n "${python_venv}" ]] && echo "${PYTHON_VENV_CHAR}${python_venv}|${PYTHON_VENV_THEME_PROMPT_COLOR}"
+}
+
+function __powerline_scm_prompt {
+  local color=""
+  local scm_prompt=""
+
+  scm_prompt_vars
+
+  if [[ "${SCM_NONE_CHAR}" != "${SCM_CHAR}" ]]; then
+    if [[ "${SCM_DIRTY}" -eq 3 ]]; then
+      color=${SCM_THEME_PROMPT_STAGED_COLOR}
+    elif [[ "${SCM_DIRTY}" -eq 2 ]]; then
+      color=${SCM_THEME_PROMPT_UNSTAGED_COLOR}
+    elif [[ "${SCM_DIRTY}" -eq 1 ]]; then
+      color=${SCM_THEME_PROMPT_DIRTY_COLOR}
+    else
+      color=${SCM_THEME_PROMPT_CLEAN_COLOR}
+    fi
+    if [[ "${SCM_GIT_CHAR}" == "${SCM_CHAR}" ]]; then
+      scm_prompt+="${SCM_CHAR}${SCM_BRANCH}${SCM_STATE}"
+    fi
+    echo "${scm_prompt}${scm}|${color}"
   fi
 }
 
-function powerline_prompt_command() {
-    local LAST_STATUS="$?"
-
-    powerline_shell_prompt
-    powerline_in_vim_prompt
-    powerline_virtualenv_prompt
-    powerline_scm_prompt
-    powerline_cwd_prompt
-    powerline_last_status_prompt LAST_STATUS
-
-    PS1="${SHELL_PROMPT}${IN_VIM_PROMPT}${VIRTUALENV_PROMPT}${SCM_PROMPT}${CWD_PROMPT}${LAST_STATUS_PROMPT} "
+function __powerline_cwd_prompt {
+  echo "$(pwd | sed "s|^${HOME}|~|")|${CWD_THEME_PROMPT_COLOR}"
 }
 
-safe_append_prompt_command powerline_prompt_command
+function __powerline_clock_prompt {
+  echo "$(date +"${THEME_PROMPT_CLOCK_FORMAT}")|${CLOCK_THEME_PROMPT_COLOR}"
+}
+
+function __powerline_battery_prompt {
+  local color=""
+  local battery_status="$(battery_percentage 2> /dev/null)"
+
+  if [[ -z "${battery_status}" ]] || [[ "${battery_status}" = "-1" ]] || [[ "${battery_status}" = "no" ]]; then
+    true
+  else
+    if [[ "$((10#${battery_status}))" -le 5 ]]; then
+      color="${BATTERY_STATUS_THEME_PROMPT_CRITICAL_COLOR}"
+    elif [[ "$((10#${battery_status}))" -le 25 ]]; then
+      color="${BATTERY_STATUS_THEME_PROMPT_LOW_COLOR}"
+    else
+      color="${BATTERY_STATUS_THEME_PROMPT_GOOD_COLOR}"
+    fi
+    ac_adapter_connected && battery_status="${BATTERY_AC_CHAR}${battery_status}"
+    echo "${battery_status}%|${color}"
+  fi
+}
+
+function __powerline_in_vim_prompt {
+  if [ -n "$VIMRUNTIME" ]; then
+    echo "${IN_VIM_THEME_PROMPT_TEXT}|${IN_VIM_THEME_PROMPT_COLOR}"
+  fi
+}
+
+function __powerline_last_status_prompt {
+  [[ "$1" -ne 0 ]] && echo "$(set_rgb_color ${LAST_STATUS_THEME_PROMPT_COLOR} -) ${1} ${normal}"
+}
+
+function __powerline_left_segment {
+  local OLD_IFS="${IFS}"; IFS="|"
+  local params=( $1 )
+  IFS="${OLD_IFS}"
+  local separator_char=""
+  local separator=""
+
+  if [[ "${SEGMENTS_AT_LEFT}" -gt 0 ]]; then
+    separator="$(set_rgb_color ${LAST_SEGMENT_COLOR} ${params[1]})${separator_char}${normal}${normal}"
+  fi
+  LEFT_PROMPT+="${separator}$(set_rgb_color - ${params[1]}) ${params[0]} ${normal}"
+  LAST_SEGMENT_COLOR=${params[1]}
+  (( SEGMENTS_AT_LEFT += 1 ))
+}
+
+function __powerline_right_segment {
+  local OLD_IFS="${IFS}"; IFS="|"
+  local params=( $1 )
+  IFS="${OLD_IFS}"
+  local separator_char=""
+  local padding=2
+  local separator_color=""
+
+  if [[ "${SEGMENTS_AT_RIGHT}" -eq 0 ]]; then
+    separator_color="$(set_rgb_color ${params[1]} -)"
+  else
+    separator_color="$(set_rgb_color ${params[1]} ${LAST_SEGMENT_COLOR})"
+    (( padding += 1 ))
+  fi
+  RIGHT_PROMPT+="${separator_color}${separator_char}${normal}$(set_rgb_color - ${params[1]}) ${params[0]} ${normal}$(set_rgb_color - ${COLOR})${normal}"
+  RIGHT_PROMPT_LENGTH=$(( ${#params[0]} + RIGHT_PROMPT_LENGTH + padding ))
+  LAST_SEGMENT_COLOR="${params[1]}"
+  (( SEGMENTS_AT_RIGHT += 1 ))
+}
+
+function __powerline_prompt_command {
+  local last_status="$?" ## always the first
+  local separator_char=""
+  local move_cursor_rightmost='\033[500C'
+
+  LEFT_PROMPT=""
+  RIGHT_PROMPT=""
+  RIGHT_PROMPT_LENGTH=0
+  SEGMENTS_AT_LEFT=0
+  SEGMENTS_AT_RIGHT=0
+  LAST_SEGMENT_COLOR=""
+
+  ## left prompt ##
+  for segment in $POWERLINE_LEFT_PROMPT; do
+    local info="$(__powerline_${segment}_prompt)"
+    [[ -n "${info}" ]] && __powerline_left_segment "${info}"
+  done
+  [[ -n "${LEFT_PROMPT}" ]] && LEFT_PROMPT+="$(set_rgb_color ${LAST_SEGMENT_COLOR} -)${separator_char}${normal}"
+
+  ## right prompt ##
+  if [[ -n "${POWERLINE_RIGHT_PROMPT}" ]]; then
+    LEFT_PROMPT+="${move_cursor_rightmost}"
+    for segment in $POWERLINE_RIGHT_PROMPT; do
+      local info="$(__powerline_${segment}_prompt)"
+      [[ -n "${info}" ]] && __powerline_right_segment "${info}"
+    done
+    LEFT_PROMPT+="\033[${RIGHT_PROMPT_LENGTH}D"
+  fi
+
+  PS1="${LEFT_PROMPT}${RIGHT_PROMPT}\n$(__powerline_last_status_prompt ${last_status})${PROMPT_CHAR} "
+
+  ## cleanup ##
+  unset LAST_SEGMENT_COLOR \
+        LEFT_PROMPT RIGHT_PROMPT RIGHT_PROMPT_LENGTH \
+        SEGMENTS_AT_LEFT SEGMENTS_AT_RIGHT
+}
+
+safe_append_prompt_command __powerline_prompt_command
