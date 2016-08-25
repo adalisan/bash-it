@@ -27,7 +27,7 @@ RBENV_THEME_PROMPT_PREFIX=""
 RBENV_THEME_PROMPT_SUFFIX=""
 
 RUBY_THEME_PROMPT_COLOR=161
-RUBY_CHAR=${POWERLINE_RUBY_CHAR:='e000'}        #                ?    
+RUBY_CHAR=${POWERLINE_RUBY_CHAR:=''}        #                ?    
 
 NVM_CHAR=" ⬡ "
 NVM_THEME_PROMPT_COLOR=220
