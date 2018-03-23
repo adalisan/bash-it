@@ -66,9 +66,9 @@ function __powerline_user_info_prompt {
   local user_info=""
   local color=${USER_INFO_THEME_PROMPT_COLOR}
 
-  if sudo -n uptime 2>&1 | grep -q "load"; then
-    color=${USER_INFO_THEME_PROMPT_COLOR_SUDO}
-  fi
+  # if sudo -n uptime 2>&1 | grep -q "load"; then
+  #   color=${USER_INFO_THEME_PROMPT_COLOR_SUDO}
+  # fi
   case "${POWERLINE_PROMPT_USER_INFO_MODE}" in
     "sudo")
       if [[ "${color}" == "${USER_INFO_THEME_PROMPT_COLOR_SUDO}" ]]; then
