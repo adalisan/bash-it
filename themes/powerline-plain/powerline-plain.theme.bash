@@ -104,7 +104,8 @@ function powerline_scm_prompt {
             if [[ $SCM_IS_TAG -eq "1" ]]; then
                 tag=$SCM_TAG_PREFIX
             fi
-            SCM_PROMPT+=" ${SCM_CHAR}${tag}${SCM_BRANCH}${SCM_STATE} "
+            SCM_BRANCH_SHORT="${SCM_BRANCH::14}"
+            SCM_PROMPT+=" ${SCM_CHAR}${tag}${SCM_BRANCH_SHORT}${SCM_STATE} "
             [[ -n "${SCM_GIT_AHEAD}" ]] && SCM_PROMPT+="${SCM_GIT_AHEAD} "
             [[ -n "${SCM_GIT_BEHIND}" ]] && SCM_PROMPT+="${SCM_GIT_BEHIND} "
             [[ -n "${SCM_GIT_STAGED}" ]] && SCM_PROMPT+="${SCM_GIT_STAGED} "
