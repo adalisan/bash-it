@@ -119,7 +119,7 @@ function preexec_install () {
     # into subshells.
 
     set -o functrace > /dev/null 2>&1
-    shopt -s extdebug > /dev/null 2>&1
+    #shopt -s extdebug > /dev/null 2>&1
 
     # Finally, install the actual traps.
     PROMPT_COMMAND="${PROMPT_COMMAND};preexec_invoke_cmd"
