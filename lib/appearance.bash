@@ -21,3 +21,10 @@ if [[ $BASH_IT_THEME ]]; then
 fi
 
 
+
+
+# Adding needed files for dircoloring
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+# Enabling dircolors coloring
+eval `gdircolors -b ~/.dircolors`
